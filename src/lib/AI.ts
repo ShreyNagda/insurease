@@ -3,13 +3,23 @@ import { InferenceClient } from "@huggingface/inference";
 const HF_API_TOKEN = process.env.HF_API_TOKEN!;
 const client = new InferenceClient(HF_API_TOKEN);
 
-export async function aiTextAnalysis(text: string) {
-  if (!HF_API_TOKEN || !client) {
-    console.log("HF token or client not specified");
+export async function AiTextAnalysis(text: string) {
+  if (!HF_API_TOKEN) {
+    console.log("No HF token");
+    return {
+      success: false,
+      error: "HF token not provided! Contact Developer",
+    };
   }
   const prompt = `
 You are an AI assistant helping someone understand their insurance policy.
+Check if the document provided is actually an insurance policy document. 
+If it's NOT an insurance policy document, return exactly this JSON:
 
+{
+  "error": "This does not appear to be a valid insurance policy document. Please upload a valid policy document"
+}
+ 
 Your tasks:
 1. Read through the entire policy document.
 2. Identify the major sections (e.g., Coverage, Premiums, Exclusions, Claims Process, Cancellation, Benefits, Eligibility, etc.).
@@ -49,11 +59,36 @@ ${text}
 """
 `;
 
-  const out = await client.chatCompletion({
-    model: "meta-llama/Llama-3.1-8B-Instruct",
-    messages: [{ role: "user", content: prompt }],
-  });
-  return out.choices[0].message.content;
+  try {
+    const out = await client.chatCompletion({
+      model: "meta-llama/Llama-3.1-8B-Instruct",
+      messages: [{ role: "user", content: prompt }],
+    });
+
+    const content = out.choices[0].message.content;
+    const parsed = JSON.parse(content || "");
+
+    // Ensure it strictly matches the shape
+    if (parsed && typeof parsed === "object") {
+      if (parsed.error) {
+        return {
+          success: false,
+          error:
+            "This does not appear to be a valid insurance policy document. Please upload a valid policy document",
+        };
+      }
+      const { documentTitle, sections } = parsed;
+      return { success: true, documentTitle, sections };
+    } else {
+      return { success: false, error: "Invalid JSON response from model." };
+    }
+  } catch (err) {
+    console.error("AI error:", err);
+    return {
+      success: false,
+      error: "AI model failed to process the document.",
+    };
+  }
 }
 
 export async function AiQuestionAnswer(question: string, context: string) {

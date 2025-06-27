@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Upload, FileText, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,12 +25,16 @@ export default function InsurancePolicyExplainer() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<ProcessingResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState("Explain Policy");
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleFileSelect = (selectedFile: File) => {
     if (selectedFile.type !== "application/pdf") {
       setError("Please select a PDF file");
       return;
     }
+    console.log(selectedFile);
     setFile(selectedFile);
     setError(null);
     setResult(null);
@@ -50,8 +54,20 @@ export default function InsurancePolicyExplainer() {
 
   const processDocument = async () => {
     if (!file) return;
-
+    if (result) return;
     setIsProcessing(true);
+    setStatus("Processing Document...");
+
+    const timeout1 = setTimeout(() => {
+      setStatus("Extracting Text...");
+    }, 1000);
+    const timeout2 = setTimeout(() => {
+      setStatus("Fetching results...");
+
+      setTimeout(() => {
+        setStatus("Results Available!");
+      }, 1000);
+    }, 1000);
     setError(null);
 
     try {
@@ -64,11 +80,13 @@ export default function InsurancePolicyExplainer() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to process document");
+        const { error } = await response.json();
+        console.log(error);
+        throw new Error(error);
       }
 
       const data = await response.json();
-      setResult(JSON.parse(data));
+      setResult(data);
     } catch (err) {
       setError(
         err instanceof Error
@@ -77,6 +95,20 @@ export default function InsurancePolicyExplainer() {
       );
     } finally {
       setIsProcessing(false);
+      return () => {
+        clearTimeout(timeout1);
+        clearTimeout(timeout2);
+      };
+    }
+  };
+
+  const clearDocument = () => {
+    setFile(null);
+    setResult(null);
+    setError(null);
+    setStatus("Explain Document");
+    if (fileInputRef.current?.value) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -145,6 +177,7 @@ export default function InsurancePolicyExplainer() {
               id="file-input"
               type="file"
               accept=".pdf"
+              ref={fileInputRef}
               className="hidden"
               onChange={(e) => {
                 const selectedFile = e.target.files?.[0];
@@ -159,23 +192,14 @@ export default function InsurancePolicyExplainer() {
                   disabled={isProcessing}
                   className="flex-1"
                 >
-                  {isProcessing ? (
+                  {isProcessing && (
                     <>
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Processing Document...
                     </>
-                  ) : (
-                    "Explain Policy Sections"
                   )}
+                  <div className="text-white">{status}</div>
                 </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setFile(null);
-                    setResult(null);
-                    setError(null);
-                  }}
-                >
+                <Button variant="outline" onClick={clearDocument}>
                   Clear
                 </Button>
               </div>

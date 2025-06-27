@@ -48,6 +48,22 @@ export default function ResultAccordion({
     linkElement.click();
   };
 
+  if (
+    !result ||
+    !result.sections ||
+    !Array.isArray(result.sections) ||
+    result.sections.length === 0
+  ) {
+    return (
+      <div className="p-6 rounded-lg bg-yellow-50 border border-yellow-200 text-yellow-800 text-center">
+        <p>
+          No valid explanation data found. Please upload a valid policy
+          document.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Legal Disclaimer */}
