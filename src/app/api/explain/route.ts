@@ -1,4 +1,4 @@
-import { aiTextAnalysis } from "@/lib/aiTextAnalysis";
+import { aiTextAnalysis } from "@/lib/AI";
 import { extractTextFromPDF } from "@/lib/pdfParser";
 import { NextRequest, NextResponse } from "next/server";
 

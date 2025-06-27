@@ -1,11 +1,11 @@
 import { InferenceClient } from "@huggingface/inference";
 
 const HF_API_TOKEN = process.env.HF_API_TOKEN!;
+const client = new InferenceClient(HF_API_TOKEN);
 
 export async function aiTextAnalysis(text: string) {
-  console.log(HF_API_TOKEN!);
-  if (!HF_API_TOKEN) {
-    console.log("HF token not specified");
+  if (!HF_API_TOKEN || !client) {
+    console.log("HF token or client not specified");
   }
   const prompt = `
 You are an AI assistant helping someone understand their insurance policy.
@@ -14,7 +14,7 @@ Your tasks:
 1. Read through the entire policy document.
 2. Identify the major sections (e.g., Coverage, Premiums, Exclusions, Claims Process, Cancellation, Benefits, Eligibility, etc.).
 3. For each section:
-   - Provide a plain English explanation **in the first person**, as if you're speaking directly to the user.
+   - Provide a plain English explanation in 200-250 words. Do not include "this explains that" 
    - Write in a friendly, helpful tone that makes legal or technical terms easier to understand for someone in India who may not be familiar with insurance jargon.
    - No important part should be skipped or no meaning should change
    - Any misleading text or part should be mentioned as a note
@@ -49,10 +49,31 @@ ${text}
 """
 `;
 
-  const client = new InferenceClient(HF_API_TOKEN);
   const out = await client.chatCompletion({
     model: "meta-llama/Llama-3.1-8B-Instruct",
     messages: [{ role: "user", content: prompt }],
   });
   return out.choices[0].message.content;
+}
+
+export async function AiQuestionAnswer(question: string, context: string) {
+  if (!HF_API_TOKEN) {
+    console.log("HF token not specified");
+  }
+
+  const prompt = `${context}
+  With this data as context asnwer the following question in in a friendly, helpful tone that makes legal or technical terms easier to understand for someone in India who may not be familiar with insurance jargon.
+  Also keep the answer precise and under 200 words
+  ${question}`;
+
+  const response = await client.chatCompletion({
+    model: "meta-llama/Llama-3.1-8B-Instruct",
+    messages: [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+  });
+  return response.choices[0].message.content;
 }
