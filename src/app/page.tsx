@@ -34,10 +34,10 @@ export default function InsurancePolicyExplainer() {
       setError("Please select a PDF file");
       return;
     }
-    console.log(selectedFile);
     setFile(selectedFile);
     setError(null);
     setResult(null);
+    setStatus("Explain policy");
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -81,12 +81,12 @@ export default function InsurancePolicyExplainer() {
 
       if (!response.ok) {
         const { error } = await response.json();
-        console.log(error);
+        setError(error);
         throw new Error(error);
       }
       const data = await response.json();
-      console.log(data);
       setResult(data);
+      console.log(data);
     } catch (err) {
       setError(
         err instanceof Error
@@ -217,7 +217,7 @@ export default function InsurancePolicyExplainer() {
         )}
 
         {/* Results Section */}
-        {result && <ResultAccordion result={{ ...result }} />}
+        {!error && result && <ResultAccordion result={{ ...result }} />}
 
         {/* Q&A Section */}
         {result && <AskQuestion result={result} />}

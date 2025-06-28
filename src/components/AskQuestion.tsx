@@ -48,7 +48,6 @@ export default function AskQuestion({
       }
 
       const data = await response.json();
-      console.log(data);
       setQaPairs((prev) => [
         { question: question.trim(), answer: data },
         ...prev,

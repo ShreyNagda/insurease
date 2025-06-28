@@ -5,7 +5,6 @@ const client = new InferenceClient(HF_API_TOKEN);
 
 export async function AiTextAnalysis(text: string) {
   if (!HF_API_TOKEN) {
-    console.log("No HF token");
     return {
       success: false,
       error: "HF token not provided! Contact Developer",
@@ -22,14 +21,13 @@ If it's NOT an insurance policy document, return exactly this JSON:
  
 Your tasks:
 1. Read through the entire policy document.
-2. Identify the major sections (e.g., Coverage, Premiums, Exclusions, Claims Process, Cancellation, Benefits, Eligibility, etc.).
-3. For each section:
+2. Verify if the document contains the valid insurance policy terms or words
+3. Identify the major sections (e.g., Coverage, Premiums, Exclusions, Claims Process, Cancellation, Benefits, Eligibility, etc.).
+4. For each section:
    - Provide a plain English explanation in 200-250 words. Do not include "this explains that" 
    - Write in a friendly, helpful tone that makes legal or technical terms easier to understand for someone in India who may not be familiar with insurance jargon.
    - No important part should be skipped or no meaning should change
 Also, extract a short document title that summarizes the policy (e.g., "ICICI Life Shield Plan").
-
-
 
 ⚠️ Format:
 Return your answer as pure JSON, exactly like this:
@@ -61,7 +59,6 @@ Now, here is the raw insurance policy text:
 ${text}
 """
 `;
-
   try {
     const out = await client.chatCompletion({
       model: "meta-llama/Llama-3.1-8B-Instruct",
@@ -89,14 +86,17 @@ ${text}
     console.error("AI error:", err);
     return {
       success: false,
-      error: "AI model failed to process the document.",
+      error: err || "AI model failed to process the document.",
     };
   }
 }
 
 export async function AiQuestionAnswer(question: string, context: string) {
   if (!HF_API_TOKEN) {
-    console.log("HF token not specified");
+    return {
+      success: false,
+      error: "HF token not provided! Contact Developer",
+    };
   }
 
   const prompt = `${context}

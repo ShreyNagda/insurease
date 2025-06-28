@@ -144,7 +144,7 @@ export default function ResultAccordion({
           </AccordionItem>
         ))}
       </Accordion>
-      {result.flag && (
+      {result.flag && result.flag !== "none" && (
         <Alert className="border-red-200 bg-red-50">
           <AlertDescription className="text-red-800">
             <strong>Alert:</strong> {result.flag}

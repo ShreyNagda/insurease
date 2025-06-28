@@ -14,14 +14,14 @@ export default function Header() {
         Upload your policy PDF for plain-language explanations and ask questions
         about your insurance
       </p>
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 max-w-2xl mx-auto">
+      {/* <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 max-w-2xl mx-auto">
         <p className="text-sm text-amber-800">
           <strong>Important:</strong> INSUREASE provides educational
           explanations only and does not constitute legal or professional
           insurance advice. Always consult with your insurance agent or legal
           professional for official policy interpretations.
         </p>
-      </div>
+      </div> */}
     </div>
   );
 }

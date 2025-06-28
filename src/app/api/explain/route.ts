@@ -14,7 +14,10 @@ export async function POST(req: NextRequest) {
   const explanation = await AiTextAnalysis(data);
   const { success, ...response } = explanation;
   if (!success) {
-    return NextResponse.json({ error: response.error }, { status: 400 });
+    return NextResponse.json(
+      { error: response.error || "Document is not a valid insurance document" },
+      { status: 400 }
+    );
   }
 
   return NextResponse.json(response);
