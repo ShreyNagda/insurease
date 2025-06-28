@@ -12,15 +12,12 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Download } from "lucide-react";
-import { PolicySection } from "@/lib/types";
+import { ProcessingResult } from "@/lib/types";
 
 export default function ResultAccordion({
   result,
 }: {
-  result: {
-    documentTitle: string;
-    sections: PolicySection[];
-  };
+  result: ProcessingResult;
 }) {
   const [showOriginalText, setShowOriginalText] = useState<
     Record<string, boolean>
@@ -147,6 +144,13 @@ export default function ResultAccordion({
           </AccordionItem>
         ))}
       </Accordion>
+      {result.flag && (
+        <Alert className="border-red-200 bg-red-50">
+          <AlertDescription className="text-red-800">
+            <strong>Alert:</strong> {result.flag}
+          </AlertDescription>
+        </Alert>
+      )}
     </div>
   );
 }

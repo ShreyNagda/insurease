@@ -7,6 +7,7 @@ export type PolicySection = {
 export type ProcessingResult = {
   documentTitle: string;
   sections: PolicySection[];
+  flag?: string;
 };
 
 export type AnalysisResult =

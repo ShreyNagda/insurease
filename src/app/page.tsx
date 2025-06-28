@@ -65,7 +65,7 @@ export default function InsurancePolicyExplainer() {
       setStatus("Fetching results...");
 
       setTimeout(() => {
-        setStatus("Results Available!");
+        setStatus("Results Fetched!");
       }, 1000);
     }, 1000);
     setError(null);
@@ -84,8 +84,8 @@ export default function InsurancePolicyExplainer() {
         console.log(error);
         throw new Error(error);
       }
-
       const data = await response.json();
+      console.log(data);
       setResult(data);
     } catch (err) {
       setError(
@@ -217,7 +217,7 @@ export default function InsurancePolicyExplainer() {
         )}
 
         {/* Results Section */}
-        {result && <ResultAccordion result={result} />}
+        {result && <ResultAccordion result={{ ...result }} />}
 
         {/* Q&A Section */}
         {result && <AskQuestion result={result} />}

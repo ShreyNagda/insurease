@@ -27,9 +27,9 @@ Your tasks:
    - Provide a plain English explanation in 200-250 words. Do not include "this explains that" 
    - Write in a friendly, helpful tone that makes legal or technical terms easier to understand for someone in India who may not be familiar with insurance jargon.
    - No important part should be skipped or no meaning should change
-   - Any misleading text or part should be mentioned as a note
-4. If not a complete section but important can be added in a new section called "note"
 Also, extract a short document title that summarizes the policy (e.g., "ICICI Life Shield Plan").
+
+
 
 ⚠️ Format:
 Return your answer as pure JSON, exactly like this:
@@ -43,8 +43,11 @@ Return your answer as pure JSON, exactly like this:
       "explanation": "string"
     }
     // repeat for each section
-  ]
+  ],
+  flag: "string"
 }
+
+- mention any misleading text or hidden fees or charges that may not be right in the pretext of legal lagnuage as the "flag" in the json data
 
 Rules:
 - Do not include any explanations, markdown, or commentary outside the JSON.
@@ -77,8 +80,8 @@ ${text}
             "This does not appear to be a valid insurance policy document. Please upload a valid policy document",
         };
       }
-      const { documentTitle, sections } = parsed;
-      return { success: true, documentTitle, sections };
+      const { documentTitle, sections, flag } = parsed;
+      return { success: true, documentTitle, sections, flag };
     } else {
       return { success: false, error: "Invalid JSON response from model." };
     }
