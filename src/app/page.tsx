@@ -20,7 +20,7 @@ import ResultAccordion from "@/components/ResultAccordion";
 import { ProcessingResult } from "@/lib/types";
 import AskQuestion from "@/components/AskQuestion";
 
-export default function InsurancePolicyExplainer() {
+export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<ProcessingResult | null>(null);
