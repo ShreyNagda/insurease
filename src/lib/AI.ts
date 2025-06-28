@@ -10,6 +10,54 @@ export async function AiTextAnalysis(text: string) {
       error: "HF token not provided! Contact Developer",
     };
   }
+  const keywords = [
+    "insurance",
+    "policy",
+    "premium",
+    "coverage",
+    "deductible",
+    "underwriting",
+    "insured",
+    "insurer",
+    "beneficiary",
+    "plan",
+    "claim",
+    "file",
+    "settlement",
+    "reimbursement",
+    "adjuster",
+    "incident",
+    "loss",
+    "damage",
+    "report",
+    "submit",
+    "included",
+    "excluded",
+    "limit",
+    "benefits",
+    "protection",
+    "liability",
+    "co-pay",
+    "out-of-pocket",
+    "expenses",
+  ];
+  let matchCount = 0;
+  for (const keyword of keywords) {
+    const regex = new RegExp(`\\b${keyword}\\b`, "i");
+    if (regex.test(text)) {
+      matchCount++;
+      if (matchCount >= 2) break; // short-circuit if 2 matches found
+    }
+  }
+
+  if (matchCount < 2) {
+    return {
+      success: false,
+      error:
+        "This does not appear to be a valid insurance policy document. Please upload a valid policy document",
+    };
+  }
+
   const prompt = `
 You are an AI assistant helping someone understand their insurance policy.
 Check if the document provided is actually an insurance policy document. 

@@ -197,7 +197,9 @@ export default function Home() {
                       <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                     </>
                   )}
-                  <div className="text-white">{status}</div>
+                  <div className="text-white">
+                    {isProcessing ? status : "Explain Document"}
+                  </div>
                 </Button>
                 <Button variant="outline" onClick={clearDocument}>
                   Clear
