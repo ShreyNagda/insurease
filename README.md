@@ -66,6 +66,3 @@ npm install
 npm run dev
 ```
 
----
-
-Let me know if you'd like a version with clickable links, a contributing section, or badges!
